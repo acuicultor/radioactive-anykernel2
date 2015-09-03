@@ -1,0 +1,50 @@
+cat << CTAG
+{
+	name:INFO,
+		elements:[
+			{ SPane:{
+				title:"Universal Kernel Manager"
+			}},
+				{ SLiveLabel:{
+					refresh:0,
+					style:italic,
+					action:"live InfoCurrent"
+			}},
+			{ SPane:{
+				title:"Radioactive Kernel"
+			}},
+				{ SLiveLabel:{
+					refresh:0,
+					style:italic,
+					action:"live KernelCurrent"
+			}},
+			{ SPane:{
+				title:"Links"
+			}},
+			{ SButton:{
+					label:"Radioactive Download",
+					action:"devtools Radioactivedownload"
+			}},
+			{ SButton:{
+					label:"UKM Xda Official Thread",
+					action:"devtools ukmxda"
+			}},
+			{ SButton:{
+					label:"UKM github Source",
+					action:"devtools ukmgithub"
+			}},
+			{ SButton:{
+					label:"acuicultor Xda Official Thread",
+					action:"devtools acuicultorxda"
+			}},
+			{ SButton:{
+					label:"Radioactive github Source",
+					action:"devtools Radioactivegithub"
+			}},
+			{ SButton:{
+					label:"AK Paypal Donations",
+					action:"devtools akdonate"
+			}},
+		]
+}
+CTAG
