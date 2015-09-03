@@ -2,25 +2,12 @@ cat << CTAG
 {
 	name:HOTPLUG,
 		elements:[
-			{ SPane:{
+                        { SPane:{
 				title:"Info"
 			}},
 				{ SDescription:{
 					description:"Use only one hotplug driver from the following options, using more than at the same time may cause unexpected behavior."
 				}},
-			`if [ -f "/system/bin/mpdecision" ]; then
-			MPDEC=\`ps | $BB grep mpdecision\`
-				if [ -n "$MPDEC" ]; then MPDEC=1; else MPDEC=0; fi
-				$BB echo '{ SPane:{
-					title:"MPDecision"
-				}},
-					{ SCheckBox:{
-						label:"Enable",
-						description:"Stock Qualcomm hotplug driver and frequency service. This should be disabled if current kernel has an alternative.",
-						default:'$MPDEC',
-						action:"serviceset mpdecision"
-					}},'
-			fi`
 			`if [ -d "/sys/module/intelli_plug/parameters" ] && [ ! -f "/sys/kernel/intelli_plug/full_mode_profile" ]; then
 				$BB echo '{ SPane:{
 					title:"Intelliplug"
