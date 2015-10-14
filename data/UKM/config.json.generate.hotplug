@@ -2,12 +2,25 @@ cat << CTAG
 {
 	name:HOTPLUG,
 		elements:[
-                        { SPane:{
+			{ SPane:{
 				title:"Info"
 			}},
 				{ SDescription:{
 					description:"Use only one hotplug driver from the following options, using more than at the same time may cause unexpected behavior."
 				}},
+			`if [ -f "/system/bin/mpdecision" ]; then
+			MPDEC=\`ps | $BB grep mpdecision\`
+				if [ -n "$MPDEC" ]; then MPDEC=1; else MPDEC=0; fi
+				$BB echo '{ SPane:{
+					title:"MPDecision"
+				}},
+					{ SCheckBox:{
+						label:"Enable",
+						description:"Stock Qualcomm hotplug driver and frequency service. This should be disabled if current kernel has an alternative.",
+						default:'$MPDEC',
+						action:"serviceset mpdecision"
+					}},'
+			fi`
 			`if [ -f "/sys/devices/system/cpu/cpuquiet/available_governors" ]; then
 				$BB echo '{ SPane:{
 					title:"CPUQuiet"
@@ -321,6 +334,9 @@ cat << CTAG
 						default:'$RT',
 						action:"generic /sys/devices/system/cpu/cpuquiet/runnable_threads/nr_run_thresholds"
 					}},' 
+					fi
+				fi
+			fi`
 			`if [ -d "/sys/module/intelli_plug/parameters" ] && [ ! -f "/sys/kernel/intelli_plug/full_mode_profile" ]; then
 				$BB echo '{ SPane:{
 					title:"Intelliplug"
@@ -1425,17 +1441,17 @@ cat << CTAG
 				fi
 			fi`
 			`if [ -d "/sys/module/blu_plug/parameters" ]; then
+				$BB echo '{ SPane:{
+					title:"Blu_Plug"
+				}},'
 				if [ -f "/sys/module/blu_plug/parameters/enabled" ]; then
 				BLUHOT=\`bool /sys/module/blu_plug/parameters/enabled\`
-					$BB echo '{ SPane:{
-						title:"Blu_Plug"
-					}},
-						{ SCheckBox:{
-							label:"Enable",
-							description:"An in kernel replacement for Qualcomms MPDecision. Developed by eng.stk.",
-							default:'$BLUHOT',
-							action:"boolean /sys/module/blu_plug/parameters/enabled"
-						}},'
+					$BB echo '{ SCheckBox:{
+						label:"Enable",
+						description:"An in kernel replacement for Qualcomms MPDecision. Developed by eng.stk.",
+						default:'$BLUHOT',
+						action:"boolean /sys/module/blu_plug/parameters/enabled"
+					}},'
 				fi
 				if [ -f "/sys/module/blu_plug/parameters/powersaver_mode" ]; then
 				PSM=\`bool /sys/module/blu_plug/parameters/powersaver_mode\`;
@@ -1449,94 +1465,94 @@ cat << CTAG
 				if [ -f "/sys/module/blu_plug/parameters/min_online" ]; then
 				MINCPU=\`$BB cat /sys/module/blu_plug/parameters/min_online\`
 					$BB echo '{ SSeekBar:{
-							title:"Minimum Online CPU",
-							description:"Minimum number of CPUs that will be always online.",
-							min:1,
-							max:'
-								sh $DEVICE MaxCPU
-							$BB echo ',
-							step:1,
-							default:'$MINCPU',
-							action:"generic /sys/module/blu_plug/parameters/min_online"
+						title:"Minimum Online CPU",
+						description:"Minimum number of CPUs that will be always online.",
+						min:1,
+						max:'
+							sh $DEVICE MaxCPU
+						$BB echo ',
+						step:1,
+						default:'$MINCPU',
+						action:"generic /sys/module/blu_plug/parameters/min_online"
 					}},'
 				fi
 				if [ -f "/sys/module/blu_plug/parameters/max_online" ]; then
 				MAXCPU=\`$BB cat /sys/module/blu_plug/parameters/max_online\`
 					$BB echo '{ SSeekBar:{
-							title:"Maximum Online CPU",
-							description:"Maximum number of CPUs that will be always online.",
-							min:1,
-							max:'
-								sh $DEVICE MaxCPU
-							$BB echo ',
-							step:1,
-							default:'$MAXCPU',
-							action:"generic /sys/module/blu_plug/parameters/max_online"
+						title:"Maximum Online CPU",
+						description:"Maximum number of CPUs that will be always online.",
+						min:1,
+						max:'
+							sh $DEVICE MaxCPU
+						$BB echo ',
+						step:1,
+						default:'$MAXCPU',
+						action:"generic /sys/module/blu_plug/parameters/max_online"
 					}},'
 				fi
 				if [ -f "/sys/module/blu_plug/parameters/max_cores_screenoff" ]; then
 				MCSO=\`$BB cat /sys/module/blu_plug/parameters/max_cores_screenoff\`
 					$BB echo '{ SSeekBar:{
-							title:"Max CPUs Screen Off",
-							description:"Maximum number of CPUs online when screen is off.",
-							min:1,
-							max:'
-								sh $DEVICE MaxCPU
-							$BB echo ',
-							step:1,
-							default:'$MCSO',
-							action:"generic /sys/module/blu_plug/parameters/max_cores_screenoff"
+						title:"Max CPUs Screen Off",
+						description:"Maximum number of CPUs online when screen is off.",
+						min:1,
+						max:'
+							sh $DEVICE MaxCPU
+						$BB echo ',
+						step:1,
+						default:'$MCSO',
+						action:"generic /sys/module/blu_plug/parameters/max_cores_screenoff"
 					}},'
 				fi
 				if [ -f "/sys/module/blu_plug/parameters/max_freq_screenoff" ]; then
 				MFSO=\`$BB cat /sys/module/blu_plug/parameters/max_freq_screenoff\`
 					$BB echo '{ SSeekBar:{
-							title:"Max Frequency Screen Off",
-							description:"Set the maximum frequency the CPU scales up to when the screen is off.",
-							default:'$MFSO',
-							action:"generic /sys/module/blu_plug/parameters/max_freq_screenoff",
-							values:{ 0:"Disabled", '
-								sh $DEVICE CPUFrequencyList
+						title:"Max Frequency Screen Off",
+						description:"Set the maximum frequency the CPU scales up to when the screen is off.",
+						default:'$MFSO',
+						action:"generic /sys/module/blu_plug/parameters/max_freq_screenoff",
+						values:{ 0:"Disabled", '
+							sh $DEVICE CPUFrequencyList
 						$BB echo '}
 					}},'
 				fi
 				if [ -f "/sys/module/blu_plug/parameters/up_threshold" ]; then
 				MAXCPU=\`$BB cat /sys/module/blu_plug/parameters/up_threshold\`
 					$BB echo '{ SSeekBar:{
-							title:"Up Threshold",
-							description:"Over this threshold the driver will put one more CPU online.",
-							unit:"%",
-							min:0,
-							max:100,
-							step:1,
-							default:'$MAXCPU',
-							action:"generic /sys/module/blu_plug/parameters/up_threshold"
+						title:"Up Threshold",
+						description:"Over this threshold the driver will put one more CPU online.",
+						unit:"%",
+						min:0,
+						max:100,
+						step:1,
+						default:'$MAXCPU',
+						action:"generic /sys/module/blu_plug/parameters/up_threshold"
 					}},'
 				fi
 				if [ -f "/sys/module/blu_plug/parameters/up_timer_cnt" ]; then
 				UT=\`$BB cat /sys/module/blu_plug/parameters/up_timer_cnt\`
 					$BB echo '{ SSeekBar:{
-							title:"Up Timer Control",
-							description:"Control timer for up CPUs.",
-							min:0,
-							max:20,
-							step:1,
-							weight:0.5,
-							default:'$UT',
-							action:"generic /sys/module/blu_plug/parameters/up_timer_cnt"
+						title:"Up Timer Control",
+						description:"Control timer for up CPUs.",
+						min:0,
+						max:20,
+						step:1,
+						weight:0.5,
+						default:'$UT',
+						action:"generic /sys/module/blu_plug/parameters/up_timer_cnt"
 					}},'
 				fi
 				if [ -f "/sys/module/blu_plug/parameters/down_timer_cnt" ]; then
 				DT=\`$BB cat /sys/module/blu_plug/parameters/down_timer_cnt\`
 					$BB echo '{ SSeekBar:{
-							title:"Down Timer Control",
-							description:"Control timer for down CPUs.",
-							min:0,
-							max:20,
-							step:1,
-							weight:0.5,
-							default:'$DT',
-							action:"generic /sys/module/blu_plug/parameters/down_timer_cnt"
+						title:"Down Timer Control",
+						description:"Control timer for down CPUs.",
+						min:0,
+						max:20,
+						step:1,
+						weight:0.5,
+						default:'$DT',
+						action:"generic /sys/module/blu_plug/parameters/down_timer_cnt"
 					}},'
 				fi
 			fi`
@@ -1922,6 +1938,14 @@ cat << CTAG
 					title:"Mako Hotplug Control",
 					description:"An in kernel replacement for Qualcomms MPDecision. Developed by franciscofranco.",
 				}},'
+				if [ -f "$MHC/enabled" ]; then
+				MHE=\`$BB cat $MHC/enabled\`
+					$BB echo '{ SCheckBox:{
+						label:"Enable",
+						default:'$MHE',
+						action:"generic '$MHC'/enabled"
+					}},'
+				fi
 				if [ -f "$MHC/cores_on_touch" ]; then
 				CT=\`$BB cat $MHC/cores_on_touch\`
 					$BB echo '{ SSeekBar:{
@@ -2138,33 +2162,7 @@ cat << CTAG
 							default:'$DL',
 							action:"generic /sys/kernel/autosmp/conf/delay"
 						}},'
-                                fi
-			fi`
-`if [ -f "/sys/kernel/zen_decision/enabled" ]; then
-			ZDON=\`$BB cat /sys/kernel/zen_decision/enabled\`
-				$BB echo '{ SPane:{
-					title:"Zen Decision"
-				}},
-					{ SCheckBox:{
-						description:"In Kernel Ultra-Light MPDecision Replacement By Bbedward",
-						label:"Enable",
-						default:'$ZDON',
-						action:"generic /sys/kernel/zen_decision/enabled"
-					        }},'
-			fi`
-			`if [ -f "/sys/kernel/zen_decision/suspend_wait_time" ]; then
-			ZDWT=\`$BB cat /sys/kernel/zen_decision/suspend_wait_time\`;
-				$BB echo '{ SPane:{
-					title:"Zen Decision Suspend Wait Time",
-				                }},
-					{ SSeekBar:{
-						description:"Refers to how long we wait after screen is off to remove the cores (default 5s). This just to avoid removing cores in excess",
-						step:1,
-						min:1,
-						max:20000,
-						default:'$ZDWT',
-						action:"generic /sys/kernel/zen_decision/suspend_wait_time"
-					}},'
+				fi
 			fi`
 		]
 }
