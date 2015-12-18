@@ -3,17 +3,6 @@ cat << CTAG
 	name:GPU,
 		elements:[
 			{ SPane:{
-				title:"Current GPU Frequency:"
-			}},
-			{ SPane:{
-				title:"Time in States:"
-			}},
-				{ SLiveLabel:{
-					refresh:5000,
-					style:italic,
-					action:"live TimeGpu 0 4"
-				}},
-			{ SPane:{
 				title:"GPU Frequency Scaling",
 			}},
 				`if [ -f "\`sh $DEVICE DirGPUMinPwrLevel\`" ]; then
