@@ -2,44 +2,6 @@ cat << CTAG
 {
     name:MISC,
 		elements:[
-                        `if [ -d "/sys/kernel/charge_levels/" ]; then
-				if [ -f "/sys/kernel/charge_levels/charge_info" ]; then
-					$BB echo '{ SPane:{
-						title:"Charge Levels Interface:"
-						}},
-						{ SLiveLabel:{
-							refresh:5000,
-							style:italic,
-							action:"live ChargeCurrent"
-						}},'
-				fi
-				if [ -f "/sys/kernel/charge_levels/charge_level_ac" ]; then
-				ACCL=\`$BB cat /sys/kernel/charge_levels/charge_level_ac\`
-					$BB echo '{ SSeekBar:{
-						title:"AC Charge Level",
-						description:"Set MAX mA allowed while charging via AC (0 = stock charging logic).",
-						unit:" mA",
-						min:0,
-						max:2200,
-						step:100,
-						default:'$ACCL',
-						action:"generic /sys/kernel/charge_levels/charge_level_ac"
-						}},'
-				fi
-				if [ -f "/sys/kernel/charge_levels/charge_level_usb" ]; then
-				USBCL=\`$BB cat /sys/kernel/charge_levels/charge_level_usb\`
-					$BB echo '{ SSeekBar:{
-						title:"USB Charge Level",
-						description:"Set MAX mA allowed while charging via USB (0 = stock charging logic).",
-						unit:" mA",
-						min:0,
-						max:1600,
-						step:100,
-						default:'$USBCL',
-						action:"generic /sys/kernel/charge_levels/charge_level_usb"
-						}},'
-				fi
-			fi`
 			{ STitleBar:{
 				title:"TCP Congestion Control"
 			}},
