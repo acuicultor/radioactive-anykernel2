@@ -9,8 +9,8 @@ if [ -z "$DEVICE" ]; then DEVICE=`$BB grep "$DEVPROP=" /system/build.prop | $BB 
 
 #Official
 case $DEVICE in
-	bacon|A0001)
-		CONFIG="bacon";; #OnePlus One
+	Z1|ham)
+		CONFIG="ham";; #Zuk Z1
 	*)
 		CONFIG="";; #Not defined
 esac;

@@ -42,7 +42,7 @@ case "$1" in
 		$BB echo "`$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/governor`"
 	;;
 	DirKernelIMG)
-		$BB echo "/dev/block/platform/msm_sdcc.1/by-name/aboot";
+		$BB echo "/dev/block/bootdevice/by-name/aboot";
 	;;
 	DirCPUGovernor)
 		$BB echo "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
@@ -81,16 +81,16 @@ case "$1" in
 		$BB echo "/proc/sys/net/ipv4/tcp_congestion_control";
 	;;
 	GPUFrequencyList)
-		for GPUFREQ in `$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/available_frequencies | $BB tr ' ' '\n' | $BB sort -u` ; do
+		for GPUFREQ in `$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/time_in_state  | $BB awk '{print $1}' | $BB sort -u` ; do
 		LABEL=$((GPUFREQ / 1000000));
 			$BB echo "$GPUFREQ:\"${LABEL} MHz\", ";
 		done;
 	;;
 	GPUGovernorList)
-		$BB echo "msm-adreno-tz","performance";
+		$BB echo "msm-adreno-tz","performance", "powersave", "cpubw_hwmon", "msm-cpufreq", "userspace", "simple_ondemand";
 	;;
 	GPUPowerLevel)
-		for GPUFREQ in `$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/available_frequencies | $BB tr ' ' '\n' | $BB sort -u` ; do
+		for GPUFREQ in `$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/time_in_state  | $BB awk '{print $1}' | $BB sort -u` ; do
 		LABEL=$((GPUFREQ / 1000000));
 			$BB echo "$GPUFREQ:\"${LABEL} MHz\", ";
 		done;
@@ -122,7 +122,7 @@ case "$1" in
 	LiveBootloader)
 		version=`getprop ro.bootloader`;
 		
-		block=/dev/block/platform/msm_sdcc.1/by-name/aboot;
+		block=/dev/block/bootdevice/by-name/aboot;
 		offset=1048080;
 		locked=00;
 		unlocked=01;
@@ -348,70 +348,13 @@ case "$1" in
 			$BB echo "\"$TCPCC\",";
 		done;
 	;;
-	ToggleBootloader)
-		block=/dev/block/platform/msm_sdcc.1/by-name/aboot;
-		offset=1048080;
-		locked=00;
-		unlocked=01;
-		lockstate=`$BB dd ibs=1 count=1 skip=$offset if=$block 2> /dev/null | $BB od -h | $BB head -n 1 | $BB cut -c 11-`;
-
-		if [ $lockstate == $locked ]; then
-			$BB echo "Setting state to Unlocked...";
-			setstate=$unlocked;
-		elif [ $lockstate == $unlocked ]; then
-			$BB echo "Setting state to Locked...";
-			setstate=$locked;
-		else
-			$BB echo "State is Unknown. No changes were made.";
-		fi;
-		
-		if [ -n "$setstate" ]; then
-			$BB echo -ne "\x$setstate" | $BB dd obs=1 count=1 seek=$offset of=$block 2> /dev/null;
-		fi;
-	;;
-	ToggleTamper)
-		block=/dev/block/platform/msm_sdcc.1/by-name/aboot;
-		offset=1048084;
-		false=00;
-		true=01;
-		tamperstate=`$BB dd ibs=1 count=1 skip=$offset obs=1 if=$block 2> /dev/null | $BB od -h | $BB head -n 1 | $BB cut -c 11-`;
-
-		if [ $tamperstate == $true ]; then
-			$BB echo "Setting tamper flag to False...";
-			setstate=$false;
-		elif [ $tamperstate == $false ]; then
-			$BB echo "Setting tamper flag to True...";
-			setstate=$true;
-		else
-			"Tamper is Unknown. No changes were made.";
-		fi;
-		
-		if [ -n "$setstate" ]; then
-			$BB echo -ne "\x$setstate" | $BB dd obs=1 count=1 seek=$offset of=$block 2> /dev/null;
-		fi;
-	;;
 		LiveCpuPvsLevel)
-			$BB echo "Pvs Bin: `$BB cat /sys/module/clock_krait_8974/parameters/pvs_level`@nSpeed Bin: `$BB cat /sys/module/clock_krait_8974/parameters/speed_level`"
-	;;
-		LiveChargeCurrent)
-			$BB echo "mA: `$BB cat /sys/kernel/charge_levels/charge_info`"
+			$BB echo "Pvs Bin: `$BB cat /sys/module/clock_krait_8974_k9/parameters/pvs_level`@nSpeed Bin: `$BB cat /sys/module/clock_krait_8974_k9/parameters/speed_level`"
 	;;
 		LiveKernelCurrent)
 			$BB echo "`$BB uname -r`"
 	;;
 		LiveInfoCurrent)
-			$BB echo "Version: 3.8.4.0 Special Edition"
-	;;
-		LiveBrickedHotplug)
-			$BB echo "Bricked Hotplug Driver"
-	;;
-		LiveIntellidHotplug)
-			$BB echo "Intelli Hotplug Driver"
-	;;
-		LivedMsmHotplug)
-			$BB echo "Msm Hotplug Driver"
-	;;
-		LiveSimpleThermal)
-			$BB echo "Simple Thermal Driver"
+			$BB echo "Version: 3.8.4.0 Nuclear Edition"
 	;;
 esac;

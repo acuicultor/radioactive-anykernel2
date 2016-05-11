@@ -144,14 +144,6 @@ cat << CTAG
 							action:"generic /sys/devices/virtual/graphics/fb0/cabc"
 						}},'
 				fi
-				if [ -f "/sys/devices/virtual/graphics/fb0/color_enhance" ]; then
-				CE=\`$BB cat /sys/devices/virtual/graphics/fb0/color_enhance\`;
-					$BB echo '{ SCheckBox:{
-						label:"Color enhancement",
-						default:'$CE',
-						action:"generic /sys/devices/virtual/graphics/fb0/color_enhance"
-					}},'
-				fi
 				if [ -f "/sys/devices/virtual/graphics/fb0/aco" ]; then
 				ACO=\`$BB cat /sys/devices/virtual/graphics/fb0/aco\`;
 					$BB echo '{ SCheckBox:{

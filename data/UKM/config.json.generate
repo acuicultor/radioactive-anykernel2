@@ -21,14 +21,12 @@ cat << CTAG
 			$BB echo ','
 			. $UKM/config.json.generate.thermal
 			$BB echo ','
-			. $UKM/config.json.generate.cpuvolt
-			$BB echo ','
 			. $UKM/config.json.generate.io
 			$BB echo ','
 			. $UKM/config.json.generate.gpu
 			$BB echo ','
 			. $UKM/config.json.generate.gamma
-			$BB echo ','
+   $BB echo ','
 			. $UKM/config.json.generate.sound
 			$BB echo ','
 			. $UKM/config.json.generate.mem

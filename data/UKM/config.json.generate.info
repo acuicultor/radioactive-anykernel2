@@ -42,8 +42,8 @@ cat << CTAG
 					action:"devtools Radioactivegithub"
 			}},
 			{ SButton:{
-					label:"AK Paypal Donations",
-					action:"devtools akdonate"
+					label:"Radioactive Paypal Donations",
+					action:"devtools donate"
 			}},
 		]
 }

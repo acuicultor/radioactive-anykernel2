@@ -56,11 +56,11 @@ cat << CTAG
 				GOV=\`$BB cat /sys/devices/system/cpu/cpuquiet/current_governor\`;
 				$BB echo '{ SOptionList:{
 						title:"CPUQuiet Governors",
-						description:"Balanced: Manage cores based on CPU Load. Runnable: Manage cores based on number of running threads. rq_stats: Uses RQ info from system to manage cores. Press restart synapse after applying a governor to show tunables.",
+						description:"Press restart synapse after applying a governor to show tunables.",
 						default:'$GOV',
 						action:"generic /sys/devices/system/cpu/cpuquiet/current_governor",
 						values:{
-							"balanced":"balanced", "runnable":"runnable", "rq_stats":"rq_stats", "load_stats":"load_stats"
+						        "load_stats":"load_stats"
 						}
 				}},'
     $BB echo '{ SButton:{
@@ -98,22 +98,6 @@ cat << CTAG
 						step:1,
 						default:'$MAX',
 						action:"generic  /sys/devices/system/cpu/cpuquiet/cpuquiet_driver/max_cpus"
-					}},'
-				OFF=\`$BB cat /sys/devices/system/cpu/cpuquiet/cpuquiet_driver/screen_off_max_cpus\`;
-					$BB echo '{ SSeekBar:{
-						title:"Max Cpus when Screen is off",
-						min:1,
-						max:4,
-						step:1,
-						default:'$OFF',
-						action:"generic  /sys/devices/system/cpu/cpuquiet/cpuquiet_driver/screen_off_max_cpus"
-					}},'
-				FREQOFF=\`$BB cat /sys/devices/system/cpu/cpuquiet/cpuquiet_driver/screen_off_cap\`;
-					$BB echo '{ SCheckBox:{
-						label:"Suspend Max Frequency",
-						description:"Set the max frequency all CPUs scales down to when screen off.",
-						default:'$FREQOFF',
-						action:"generic /sys/devices/system/cpu/cpuquiet/cpuquiet_driver/screen_off_cap"
 					}},'
 					if [ "$GOV" == "rq_stats" ]; then
 					BENABLE=\`$BB cat /sys/devices/system/cpu/cpuquiet/rq_stats/input_boost_enabled\`;
