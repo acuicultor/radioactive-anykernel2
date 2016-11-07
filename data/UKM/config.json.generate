@@ -17,6 +17,8 @@ cat << CTAG
 			$BB echo ','
 			. $UKM/config.json.generate.cpu
 			$BB echo ','
+                        . $UKM/config.json.generate.cpuvolt
+			$BB echo ','
 			. $UKM/config.json.generate.hotplug
 			$BB echo ','
 			. $UKM/config.json.generate.thermal
@@ -26,7 +28,7 @@ cat << CTAG
 			. $UKM/config.json.generate.gpu
 			$BB echo ','
 			. $UKM/config.json.generate.gamma
-   $BB echo ','
+                        $BB echo ','
 			. $UKM/config.json.generate.sound
 			$BB echo ','
 			. $UKM/config.json.generate.mem
